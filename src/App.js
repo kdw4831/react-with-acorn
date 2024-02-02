@@ -3,20 +3,6 @@
 import { Component } from 'react';
 import './App.css'
 
-
-
-// //함수형 component
-// function App() {
-  
-
-
-//   return (
-//     <div className='container'>
-//       <h1>인덱스 페이지 입니다.</h1>
-//     </div>
-//   );
-// }
-
 //클래스형 component
 class App extends Component{
   //render()함수에서 리턴하는 jsx로 화면 구성이 된다.
