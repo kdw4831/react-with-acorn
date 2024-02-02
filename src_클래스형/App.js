@@ -17,7 +17,7 @@ import './App.css'
 //   );
 // }
 
-//클래스형 component
+
 class App extends Component{
   //render()함수에서 리턴하는 jsx로 화면 구성이 된다.
   render(){
