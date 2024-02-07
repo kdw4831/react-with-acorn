@@ -1,37 +1,16 @@
-
-//App.css 적용하기
+// App.css 적용하기 (내부 css)
 import './App.css'
 
-
+//함수형 component
 function App() {
-  
-  const myName="김구라"
-  
-  //함수를 미리 망들어 놓고
-  const clicked=()=>{
-    alert("버튼을 눌렀네")
-  }
-
-  const boxStyle={
-    width:"100px",
-    height:"100px",
-    border: "1px solid red",
-    backgroundColor:"yellow"
-  }
-
 
   return (
     <div className="container">
-      <h1>React js 입니다.</h1>
-      <p>내이름은 <strong>{myName}</strong></p>
-      <button onClick={()=>{
-        alert("버튼을 눌렀네?")
-      }}>눌러보셈</button>
-      {/* 만들어 놓은 함수 사용해보기*/ }
-      <button onClick={clicked} >눌러보셈 2</button>
-      <div style={boxStyle}></div>
+      <h1>인덱스 페이지 입니다</h1>
+      
     </div>
   );
 }
 
+//외부에서 App.js 를 import 하면 App 함수를 사용할수 있다. (src/index.js)
 export default App;

@@ -2,7 +2,6 @@
 //App.css 적용하기
 import { Component } from 'react';
 import './App.css'
-import axios from 'axios';
 /*
     [Restful API 요청 예시]
     GET    /posts    =>  post 목록얻어오기
@@ -25,16 +24,15 @@ class App extends Component{
   }
 
   getPosts= ()=>{
-       
-       axios.get("http://localhost:4000/posts")
-       .then(res=>{
-        //res.data에 응답한 내용이 들어 있다.
-        console.log(res.data)
-        this.setState({
-          posts:res.data
-        })
+       //안드로이드의 onCreate()메소드에서 하는 준비작업을 비슷하게 여기서 하면된다.
+       fetch("http://localhost:4000/posts")
+       .then(res=>res.json())
+       .then(data=>{
+         //data는 posts 목록이 들어있는 배열이다. [{},{},{}...]
+         console.log(data)
+         this.setState({posts:data})
+         
        })
-       
   }
 
   //render()함수에서 리턴하는 jsx로 화면 구성이 된다.
@@ -59,24 +57,32 @@ class App extends Component{
                 <td>{item.title}</td>
                 <td>{item.writer}</td>
                 <td><button onClick={()=>{
-                  const title=prompt(item.id+"번 글의 수정할 제목 입력...")
-                  //json 문자열을 요청 body에 담고 싶으면 {} 에담으면된다.
-                  axios.patch("http://localhost:4000/posts/"+item.id,{
-                    title:title  // 그냥 title 이렇게 해도 됨
+                  const title =prompt(item.id+ "번글의 수정할 제목 입력...")
+                  //서버에 전송할 정보를 object에 일단 담는다
+                  const obj={
+                    title: title
+                  }
+                  //object에 담긴 내용을 이용해서 json 문자열을 얻어낸다.
+                  const jsonStr=JSON.stringify(obj)
+                  // 일부 수정이기 때문에 PATCH 방식 요청을 한다.
+                  fetch("http://localhost:4000/posts/"+ item.id,{
+                    method:"PATCH",
+                    headers:{"Content-Type":"application/json; charset=utf-8"},
+                    body:jsonStr
                   })
-                  .then(res=>{
+                  .then(res=>res.json())
+                  .then(data=>{
                     this.getPosts()
                   })
-
                 }}>수정</button></td>
                 <td><button onClick={()=>{
-                  
-                  axios.delete("http://localhost:4000/posts/"+item.id)
-                  .then(res=>{
+                  //delete 방식 요청
+                  fetch("http://localhost:4000/posts/"+item.id,{
+                    method:"DELETE"
+                  })                  
+                  .then(res=>res.json())
+                  .then(data=>{
                     this.getPosts()
-                  })
-                  .catch(error=>{
-                    console.log(error)
                   })
                 }}>삭제</button></td>
               </tr>
@@ -95,12 +101,21 @@ class App extends Component{
           //전송할 폼 데이터
           const formData=new FormData(e.target);
           const queryString=new URLSearchParams(formData).toString();
-
-          //axios로 post 방식 요청하기
-          axios[method](url,queryString)
-          .then(res=>{
-            this.getPosts()
-          })      
+          //fetch() 함수를 이용해서 전송
+          fetch(url, {
+              method,
+              headers:{"Content-Type":"application/x-www-form-urlencoded; charset=utf-8"},
+              body:queryString
+          })
+          .then(res=>res.json())
+          .then(data=>{
+              console.log(data);
+              alert(data.id+ "번 post로 등록되었습니다.")
+              this.getPosts()
+          })
+          .catch(error=>{
+              console.log("에러 발생", error)
+          });
         }}>
           <input type="text" name='title' placeholder='제목...' />
           <input type="text" name='writer' placeholder='작성자..' />
