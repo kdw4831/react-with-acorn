@@ -1,39 +1,33 @@
-
-//App.css 적용하기
-import { Component } from 'react';
+// App.css 적용하기 (내부 css)
+import { useState } from 'react';
 import './App.css'
-import { Link, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import Study from './pages/Study';
-import Play from './pages/Play';
-import NotFound from './pages/NotFound';
-import Todo from './pages/Todos';
 
-//클래스형 component
-class App extends Component{
-  //render()함수에서 리턴하는 jsx로 화면 구성이 된다.
-  render(){
-    return(
-      <div className='container'>
-        <h1>React Router를 이용한 SPA 테스트</h1>
-        <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/study">Study</Link></li>
-          <li><Link to="/play">Play</Link></li>
-          <li><Link to="/todos">Todos</Link></li>
-        </ul>
-        <Routes>
-          <Route path='/' Component={Home}></Route>
-          <Route path='/study' Component={Study}></Route>
-          <Route path='/play' Component={Play}></Route> 
-          <Route path='/todos' Component={Todo}></Route> 
-          <Route path='/*' Component={NotFound}></Route>
-
-        </Routes>
-      </div>
-    )
-  }
+//함수형 component
+function App() {
+  /*
+    - useState() 함수는 배열을 리턴한다
+    - [ 상태값, 상태값을 바꿀 함수 ] 구조이다
+    - useState(상태의 초기값)
+  */
+  const [count, setCount]=useState(0)
+  const [state, setState]=useState({
+    count:0
+  })
+  return (
+    <div className="container">
+        <h1>인덱스 페이지 입니다</h1>
+        <button onClick={()=>{
+          // 버튼을 눌렀을 때 상태값을 바꾸는 함수를 이용해서 상태값을 변경해 준다.
+          setCount(count+1)
+        }}>{count}</button>
+        <button onClick={()=>{
+          setState({
+            count:state.count+1
+          })
+        }}>{state.count}</button>
+    </div>      
+  );
 }
 
-//외부에서 App.js를 import하면 App 함수를 사용할 수 있다 (src/index.js)
+//외부에서 App.js 를 import 하면 App 함수를 사용할 수 있다. (src/index.js)
 export default App;
