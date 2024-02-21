@@ -1,0 +1,13 @@
+/* src/components/css/custom_study.module.css*/
+
+.bg-yellow{
+    background-color: yellow;
+}
+
+.font-red{
+    color:red;
+}
+
+.font-bold{
+    font-weight: bold;
+}
