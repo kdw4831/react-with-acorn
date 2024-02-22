@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 // App.js를 import 해서
-import App from './App2';
+import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 
