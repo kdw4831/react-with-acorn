@@ -1,68 +1,123 @@
-// App.css 적용하기 (내부 css)
-import { useRef, useState } from 'react';
-import './App.css'
+
+// npm install bootstrap 해서 설치가 되어 있다면 bootstrap css 를 사용할수 있다.
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.css'
+import { decodeToken } from 'jsontokens';
+import { useEffect, useState } from 'react';
+import { Alert, Button, FloatingLabel, Form, Modal } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 
-//함수형 component
-function App2() {
-  //input 요소의 참조값을 활용하기 위해
-  let inputFile=useRef()
+export default function App2(){
+    const dispatch = useDispatch()
+    //페이지 로딩시점에 token 확인!
+    useEffect(()=>{
+        if(localStorage.token){
+            //토큰을 디코딩
+            const result=decodeToken(localStorage.token);
+            //초단위
+            const expTime=result.payload.exp*1000; // *1000 을 해서 ms 단위로 만들고 
+            //현재시간
+            const now=new Date().getTime();
+            //만일 유효기간이 만료 되었다면 
+            if(expTime < now){
+                dispatch({type:"SET_LOGIN", payload:false})
+            }else{//유효기간이 만료 되지 않았다면 로그인된 상태라고 간주!
+                dispatch({type:"SET_LOGIN", payload:true})
+                dispatch({type:"UPDATE_USER", payload:result.payload.sub})
+            }
+        }
+    }, [])
 
-  const [fileData, setFileData]=useState({
-    orgFileName:"",
-    saveFileName:"",
-    fileSize:0,
-    url:""
-  })
+    const isLogin = useSelector(state => state.isLogin)
+    const userName = useSelector(state => state.userName)
 
-  return (
-    <div className="container">
-      <h1>인덱스 페이지 입니다</h1>
-      
-      <h3>업로드할 파일 선택</h3>
-      <input type="file"  ref={inputFile} />
-      <button onClick={()=>{
-        console.log(inputFile.current)
-        //FormData 객체를 생성해서 
-        const formData=new FormData()
-        //선택한 파일을 myFile 라는 파라미터명으로 담는다
-        formData.append("myFile", inputFile.current.files[0])
-      
-        //axios 를 이용해서 multipart 요청을 보낸다
-        axios.post("/file/upload", formData, {
-          headers:{
-            "Content-Type":"multipart/form-data"
-          }
-        })
-        .then(res=>{
-          console.log(res.data)
-          const url ="http://localhost:9000/boot11/file/download?"+
-            "orgFileName="+res.data.orgFileName+
-            "&saveFileName="+res.data.saveFileName+
-            "&fileSize="+res.data.fileSize;
-          setFileData({
-            orgFileName:res.data.orgFileName,
-            saveFileName:res.data.saveFileName,
-            fileSize:res.data.fileSize,
-            url
-          })
-        })
-        .catch(error=>{
-          console.log(error)
-        })
+    const handleLogout= ()=>{
+        //localStorage에 저장된 토큰 삭제
+        delete localStorage.token
+        //store의 상태 바꾸기 
+        dispatch({type:"SET_LOGIN",payload:false})
+    }
 
-      }}>업로드</button>
-      {fileData.fileSize !==0 && 
-      <div>
-        <p>원본 파일명: <strong>{fileData.orgFileName}</strong> </p>
-        <p>저장 파일명: <strong>{fileData.saveFileName}</strong> </p>
-        <p>파일의 크기: <strong>{fileData.fileSize}</strong>byte</p>   
-        <a href={fileData.url}>다운로드</a>
-      </div>
-      }
-    </div>
-  );
+    return (
+        <div className="container">
+            <h1>인덱스 페이지 입니다</h1>
+            {
+                isLogin && <p> <strong>{userName}</strong> 님 로그인중... <button onClick={handleLogout}>로그아웃</button></p>
+            }
+            <MyModal show={!isLogin}></MyModal>
+        </div>
+        
+    )
 }
 
-//외부에서 App.js 를 import 하면 App 함수를 사용할수 있다. (src/index.js)
-export default App2;
+function MyModal(props) {
+    //입력한 userName 과 password 를 상태값으로 관리
+    const [state, setState]=useState({})
+    const [isError, setError]=useState(false)
+
+    //input 요소에 문자열을 입력했을때 호출되는 함수 
+    const handleChange = (e)=>{
+        setState({
+            ...state,
+            [e.target.name]:e.target.value
+        })
+    }
+    const dispatch=useDispatch()
+    //로그인 버튼 눌렀을때 실행할 함수 
+    const handleSubmit = ()=>{
+        axios.post("/auth", state)
+        .then(res=>{
+            //로그인 성공이면 여기가 실행되면서 JWT 가 발급되고 
+            console.log(res.data)
+            //토큰을 localStorage 에 저장
+            localStorage.token=res.data
+            //모달창을 숨기고
+            dispatch({type:"SET_LOGIN", payload:true})
+            //에러 정보를 없앤다
+            setError(false)
+            //토큰을 디코딩해서 사용자 정보를 얻어온다
+            const result=decodeToken(localStorage.token)
+            //토큰 말료시간
+            const expTime=result.payload.exp*1000 //초단위를 ms 초로 바꾸기위해 
+            //현재시간
+            const now=new Date().getTime() // 현재 시간을 ms 초 단위로 얻어내기
+            //토큰에 저장된 주제(subject) 얻어내기
+            const userName=result.payload.sub
+
+            //userName 를 수정하는 dispatch
+            dispatch({type:"UPDATE_USER", payload:userName})
+        })
+        .catch(error=>{ 
+            //아이디 혹은 비밀번호가 클리면 여기가 실행된다.
+            setError(true)
+        })
+    }
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            로그인이 필요 합니다.
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FloatingLabel controlId="floatingInput" label="User Name" className="mb-3">
+            <Form.Control onChange={handleChange}  name="userName" type="text"  placeholder="User Name"/>
+          </FloatingLabel>
+          <FloatingLabel  controlId="floatingPassword" label="Password" className="mb-3">
+            <Form.Control onChange={handleChange} name="password" type="password" placeholder="Password" />
+          </FloatingLabel>
+          {
+            isError && <Alert variant='danger'>아이디 혹은 비밀 번호가 틀려요</Alert>
+          }
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleSubmit}>로그인</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
