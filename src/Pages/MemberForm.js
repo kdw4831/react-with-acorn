@@ -1,6 +1,9 @@
+
+import { Button } from "@mui/material"
 import axios from "axios"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Col, Form, Row } from "react-bootstrap"
+import {  useNavigate } from "react-router-dom"
 
 //src/pages/MemberForm.js
 export default function MemberForm(){
@@ -35,6 +38,22 @@ export default function MemberForm(){
             <input type="text" name="name" placeholder="이름..." onChange={handleChange} />
             <input type="text" name="addr" placeholder="주소..." onChange={handleChange}/>
             <button onClick={ handleSave}>추가</button>
+
+            <Form>
+                <Form.Group as={Row} className="mb-3" controlId="name">
+                    <Form.Label column sm="2">이름</Form.Label>
+                    <Col sm="10">
+                        <Form.Control type="text" placeholder="이름 입력..."/>
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className="mb-3" controlId="addr">
+                    <Form.Label column sm="2">주소</Form.Label>
+                    <Col sm="10">
+                        <Form.Control type="text" placeholder="주소 입력..." />
+                    </Col>
+                </Form.Group>
+                <Button variant="outlined" onClick={handleSave}>추가</Button>
+            </Form>
         </>
     )
 }

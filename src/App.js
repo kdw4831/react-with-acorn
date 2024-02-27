@@ -8,6 +8,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { decodeToken } from "jsontokens";
 import 'bootstrap/dist/css/bootstrap.css'
+import MemberUpdateForm from "./Pages/MemberUpdateForm";
+import BsNavbar from "./components/BsNavBar";
 
 //함수형 component
 function App() {
@@ -36,6 +38,8 @@ function App() {
   const isLogin = useSelector(state => state.isLogin)
   
   return (
+    <>
+    <BsNavbar/>
     <div className="container">
       <ul>
         <li><NavLink to="/">Home</NavLink></li>
@@ -46,11 +50,13 @@ function App() {
         <Route path="/" element={<Home/>}/>
         <Route path="/members" element={<Member/>}/>
         <Route path="/members/new" element={<MemberForm/>}/>
-        <Route path="/members/:num/edit" />
+        <Route path="/members/:num/edit" element={<MemberUpdateForm/>}/>
       </Routes>
 
       <LoginModal show={!isLogin}></LoginModal>
     </div>
+
+    </>
   );
 }
 
