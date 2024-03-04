@@ -10,6 +10,10 @@ import { decodeToken } from "jsontokens";
 import 'bootstrap/dist/css/bootstrap.css'
 import MemberUpdateForm from "./Pages/MemberUpdateForm";
 import BsNavbar from "./components/BsNavBar";
+import EditorComponent from "./Pages/EditorComponent";
+import Gallery from "./Pages/Gallery";
+import Book from "./Pages/book";
+
 
 //함수형 component
 function App() {
@@ -51,6 +55,9 @@ function App() {
         <Route path="/members" element={<Member/>}/>
         <Route path="/members/new" element={<MemberForm/>}/>
         <Route path="/members/:num/edit" element={<MemberUpdateForm/>}/>
+        <Route path="/editor" Component={EditorComponent}/>
+        <Route path="/gallery" Component={Gallery}/>
+        <Route path="/book" Component={Book}/> 
       </Routes>
 
       <LoginModal show={!isLogin}></LoginModal>
