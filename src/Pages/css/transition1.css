@@ -1,0 +1,38 @@
+
+/* src/pages/css/transition1.css  */
+
+.gura-enter{
+    /* 투명도를 완전투명(안보이는 상태)에서 */
+    opacity: 0;
+}
+
+.gura-enter-active{
+    /* 완전 불투명(완벽히 보이는상태) 까지 0.4 초 (400ms) 동안 변화되도록 하기 */
+    opacity: 1;
+    transition: opacity 400ms;
+}
+
+.gura-exit{
+    opacity: 1;
+}
+.gura-exit-active{
+    opacity: 0; 
+    transition: opacity 400ms;
+}
+
+.monkey-enter{
+    transform: scale(0.8);
+}
+
+.monkey-enter-active{
+    transform: scale(1);
+    transition: transform 400ms;
+}
+
+.monkey-exit{
+    transform: scale(1) rotate(0deg);
+}
+.monkey-exit-active{
+    transform: scale(0.1) rotate(360deg);
+    transition: transform 400ms;
+}

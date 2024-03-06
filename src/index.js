@@ -11,12 +11,41 @@ import { legacy_createStore as createStore } from 'redux';
 // store(저장소) 공급자 
 import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
+import { decodeToken } from 'jsontokens';
+import axios from 'axios';
 
-//store 에서 관리될 초기 상태값
-const initialState={
-  userName:null,
-  isLogin:false
+// //store 에서 관리될 초기 상태값
+// const initialState={
+//   userName:null,
+//   isLogin:false
+// }
+
+//token 이 존재 한다면 token 에서 값을 읽어와서 저장할 변수
+let userName=null
+let isLogin=false
+
+//만일 토큰이 존재한다면
+if(localStorage.token){
+  //토큰을 디코딩
+  const result=decodeToken(localStorage.token);
+  //초단위
+  const expTime=result.payload.exp*1000; //*1000 을 해서 ms 단위로 만들고
+  //현재시간 (ms 단위)
+  const now=new Date().getTime();
+  //만일 유효기간이 만료 되지 않았다면
+  if(expTime > now){
+    userName=result.payload.sub
+    isLogin=true
+    //axios 의 header 에 인증정보를 기본으로 가지고 갈 수 있도록 설정
+    axios.defaults.headers.common["Authorization"]="Bearer+"+localStorage.token
+  }else{
+    //만료된 토큰은 삭제한다
+    delete localStorage.token
+  }
 }
+//store 에서 관리될 초기 상태값
+const initialState={userName,isLogin} //키값과 변수명이 동일하면 userName:userName 을 그냥 userName 으로 쓸 수 있다.
+
 
 //reducer 함수
 const reducer = (state=initialState, action)=>{

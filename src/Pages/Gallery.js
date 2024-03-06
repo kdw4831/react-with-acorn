@@ -3,7 +3,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button, Card, Col, FloatingLabel, Form, Modal, Pagination, Row } from "react-bootstrap";
-import { useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Gallery(){
     //이미지 업로드 form 을 띄울지 여부를 상태값으로 관리 
@@ -20,7 +20,8 @@ export default function Gallery(){
 
     //페이징 UI를 만들때 사용할 배열
     const [pageArray,setPageArray]= useState([])
-   
+    //페이지를 이동할 훅
+    const navigate= useNavigate()
 
     //페이징 UI를 만들때 사용할 배열을 리턴해주는 함수
     function createArray(start,end){
@@ -73,7 +74,8 @@ export default function Gallery(){
                     <Card.Body>
                       <Card.Text>{item.caption}</Card.Text>
                       <Card.Text>writer : <strong>{item.writer}</strong></Card.Text>
-                      <Button>자세히 보기</Button>
+                      <Button onClick={()=>{ navigate("/gallery/"+item.num) }}>자세히 보기</Button>
+                      <Button as={Link} to={"/gallery/"+item.num}>자세히보기</Button>
                     </Card.Body>
                   </Card>
                 </Col>
@@ -96,7 +98,19 @@ export default function Gallery(){
                 setParams({pageNum:pageInfo.endPageNum+1})
                 }} disabled={pageInfo.endPageNum >= pageInfo.totalPageCount}>&raquo;</Pagination.Item> 
             </Pagination>  
-            <UploadFormModal show={formShow} setShow={setFormShow}/>
+            <UploadFormModal show={formShow} setShow={setFormShow}  success={()=>{
+              //현재 페이지 번호
+              const pageNum=params.get("pageNum")
+              //화면이 새로 고침 되도록 setParams 함수를 호출해 준다.
+              if(pageNum==1){
+                //1페이지가 refresh 되도록하고 
+                refresh(1)
+              }else{
+                //다른 경우에는 query parameter를 변경하면서 refresh 되도록 한다.
+                setParams({pageNum:1})
+              }
+              
+            }} />
         </>
     )
 }
@@ -141,6 +155,8 @@ function UploadFormModal(props) {
             //입력하거나 선택된 상태값 초기화 
             setPreviewImage(null)
             setCaption(null)
+            //업로드 성공이라는 의미에서 success 함수 전달
+            props.success()
         })
         .catch(error=>{
             console.log(error);

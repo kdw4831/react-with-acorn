@@ -5,39 +5,24 @@ import MemberForm from "./Pages/MemberForm";
 import { Alert, Button, FloatingLabel, Modal, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { decodeToken } from "jsontokens";
 import 'bootstrap/dist/css/bootstrap.css'
 import MemberUpdateForm from "./Pages/MemberUpdateForm";
 import BsNavbar from "./components/BsNavBar";
 import EditorComponent from "./Pages/EditorComponent";
-import Gallery from "./Pages/Gallery";
+
 import Book from "./Pages/book";
+import GalleryDetail from "./Pages/GalleryDetail";
+import Gallery from "./Pages/Gallery";
+import Transition from "./Pages/Transition";
+
+
 
 
 //함수형 component
 function App() {
-  const dispatch = useDispatch()
-  //페이지 로딩시점에 token 확인!
-  useEffect(()=>{
-      if(localStorage.token){
-          //토큰을 디코딩
-          const result=decodeToken(localStorage.token);
-          //초단위
-          const expTime=result.payload.exp*1000; // *1000 을 해서 ms 단위로 만들고 
-          //현재시간
-          const now=new Date().getTime();
-          //만일 유효기간이 만료 되었다면 
-          if(expTime < now){
-              dispatch({type:"SET_LOGIN", payload:false})
-          }else{//유효기간이 만료 되지 않았다면 로그인된 상태라고 간주!
-              dispatch({type:"SET_LOGIN", payload:true})
-              dispatch({type:"UPDATE_USER", payload:result.payload.sub})
-              //axios의 header에 인증 정보를 기본으로 가지고 갈 수 있도록 설정한다.
-              axios.defaults.headers.common["Authorization"]="Bearer+"+localStorage.token
-          }
-      }
-  }, [])
+
   //로그이 여부(유효한 토큰이 존재하는지 여부) 알아내기 
   const isLogin = useSelector(state => state.isLogin)
   
@@ -57,7 +42,9 @@ function App() {
         <Route path="/members/:num/edit" element={<MemberUpdateForm/>}/>
         <Route path="/editor" Component={EditorComponent}/>
         <Route path="/gallery" Component={Gallery}/>
+        <Route path="/gallery/:num" Component={GalleryDetail}/>
         <Route path="/book" Component={Book}/> 
+        <Route path="/transition" Component={Transition}/>
       </Routes>
 
       <LoginModal show={!isLogin}></LoginModal>
