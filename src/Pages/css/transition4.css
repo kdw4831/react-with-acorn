@@ -1,0 +1,27 @@
+/*
+    src/pages/css/transititon4.css
+*/
+
+
+.fade2-enter {
+      
+    opacity: 0; /*투명도 0*/
+    transform:translateX(-100%);
+}
+
+.fade2-enter-active{ 
+    opacity: 1;
+    transform:translateX(0%);
+    transition:opacity 0.5s, transform 0.5s
+}
+
+.fade2-exit{
+    opacity: 1;
+    transform: translateX(0%);
+}
+
+.fade2-exit-active{
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.5s, transform 0.5s;
+}

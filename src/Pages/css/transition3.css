@@ -1,0 +1,26 @@
+/*src/pages/css/transition3.css*/
+
+
+
+.fade-enter  .btn{
+      
+    opacity: 0; /*투명도 0*/
+    transform:translateX(-100%);
+}
+
+.fade-enter-active  .btn{ 
+    opacity: 1;
+    transform:translateX();
+    transition:opacity 0.5s, transform 0.5s
+}
+
+.fade-exit .btn{
+    opacity: 1;
+    transform: translateX(0%);
+}
+
+.fade-exit-active  .btn{
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.5s, transform 0.5s;
+}

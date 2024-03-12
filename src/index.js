@@ -5,13 +5,15 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 //라우터를 사용할 준비
-import { BrowserRouter } from 'react-router-dom';
+import {  RouterProvider } from 'react-router-dom';
 // legacy_createStore 를 createStore 라는 이름으로 사용하기 (store 를 만들 함수)
 import { legacy_createStore as createStore } from 'redux';
 // store(저장소) 공급자 
 import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import { decodeToken } from 'jsontokens';
+
+import router from './router/router';
 import axios from 'axios';
 
 // //store 에서 관리될 초기 상태값
@@ -73,11 +75,7 @@ const store = createStore(reducer)
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
-    <BrowserRouter>
-    
-        <App />
-   
-    </BrowserRouter>
+    <RouterProvider router={router}/>
   </Provider>
 );
 

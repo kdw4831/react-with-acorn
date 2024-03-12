@@ -28,6 +28,7 @@ export default function BsNavbar(){
                         
                         <Nav.Link as={NavLink} to="/members">Member</Nav.Link>
                         <Nav.Link as={NavLink} to="/gallery">Gallery</Nav.Link>
+                        <Nav.Link as={NavLink} to="/cafes">Cafe</Nav.Link>
                     </Nav>
                     {/* store에 userName이 null이 아니면 userName을 출력 아니면 로그인 버튼 출력*/ }
                     {userName ?

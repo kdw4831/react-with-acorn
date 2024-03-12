@@ -30,6 +30,9 @@ export default function Home(){
                 <li><Link to="/editor">smartEditor 테스트</Link></li>
                 <li><Link to="/book">query Param 테스트</Link></li>
                 <li><Link to="/transition">react 트렌지션 테스트</Link></li>
+                <li><Link to="/transition2">react 트렌지션 테스트2</Link></li>
+                <li><Link to="/transition3">react 트렌지션 테스트3</Link></li>
+                <li><Link to="/transition4">react 트렌지션 테스트4</Link></li>
                 
             </ul>
 

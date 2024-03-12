@@ -1,22 +1,13 @@
-import { NavLink, Route, Routes } from "react-router-dom";
-import Home from "./Pages/Home";
-import Member from "./Pages/Member";
-import MemberForm from "./Pages/MemberForm";
+import { useLocation, useOutlet } from "react-router-dom";
 import { Alert, Button, FloatingLabel, Modal, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { decodeToken } from "jsontokens";
-import 'bootstrap/dist/css/bootstrap.css'
-import MemberUpdateForm from "./Pages/MemberUpdateForm";
+import 'bootstrap/dist/css/bootstrap.css';
 import BsNavbar from "./components/BsNavBar";
-import EditorComponent from "./Pages/EditorComponent";
-
-import Book from "./Pages/book";
-import GalleryDetail from "./Pages/GalleryDetail";
-import Gallery from "./Pages/Gallery";
-import Transition from "./Pages/Transition";
-
+import 'animate.css';
+import { CSSTransition, SwitchTransition } from "react-transition-group";
 
 
 
@@ -26,16 +17,56 @@ function App() {
   //로그이 여부(유효한 토큰이 존재하는지 여부) 알아내기 
   const isLogin = useSelector(state => state.isLogin)
   
+  //라우트된 정보를 출력해주는 Hook
+  const currentOutlet =useOutlet()
+
+  //현재 위치(경로) 정보를 얻어낼 수 있는 Hook
+  const location=useLocation()
+  
+  //참조값 관리를 위한 Hook
+  const nodeRef=useRef()
+  //transition 클래스 정보
+  const tranClass={
+    enter:"animate__animated",
+    enterActive:"animate__fadeIn",
+    exit:"animate__animated",
+    exitActive:"animate__fadeOut"
+  }
+  
   return (
     <>
     <BsNavbar/>
     <div className="container">
-      <ul>
+        <SwitchTransition mode="out-in">
+          {/* "out-in" 사라지고 들어오기 | "in-out" 들어오고 사라지기 */}
+          <CSSTransition
+            key={location.pathname}
+            nodeRef={nodeRef}
+            timeout={500}
+            classNames={tranClass}
+            unmountOnExit
+          >
+          {
+            (state)=>(<div ref={nodeRef}>{currentOutlet}</div>)
+          }
+          </CSSTransition>
+        </SwitchTransition>
+
+      
+      <LoginModal show={!isLogin}></LoginModal>
+    </div>
+
+
+
+
+ {/* <ul>
         <li><NavLink to="/">Home</NavLink></li>
         <li><NavLink to="/members">Member</NavLink></li>
-      </ul>
+      </ul> */}
 
-      <Routes>
+     
+
+      {/* <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/members" element={<Member/>}/>
         <Route path="/members/new" element={<MemberForm/>}/>
@@ -45,11 +76,8 @@ function App() {
         <Route path="/gallery/:num" Component={GalleryDetail}/>
         <Route path="/book" Component={Book}/> 
         <Route path="/transition" Component={Transition}/>
-      </Routes>
-
-      <LoginModal show={!isLogin}></LoginModal>
-    </div>
-
+        <Route path="/transition2" Component={Transition2}/>
+      </Routes> */}
     </>
   );
 }
@@ -128,5 +156,9 @@ function LoginModal(props) {
    
   );
 }
+
+
+
+
 
 
