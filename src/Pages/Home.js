@@ -33,6 +33,8 @@ export default function Home(){
                 <li><Link to="/transition2">react 트렌지션 테스트2</Link></li>
                 <li><Link to="/transition3">react 트렌지션 테스트3</Link></li>
                 <li><Link to="/transition4">react 트렌지션 테스트4</Link></li>
+                <li><Link to="/ref_test">Ref 테스트</Link></li>
+                <li><Link to="/module_css">module_css 테스트하기</Link></li>
                 
             </ul>
 

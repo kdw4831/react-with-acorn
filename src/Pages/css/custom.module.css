@@ -1,0 +1,22 @@
+/*
+    src/pages/css/custom.module.css
+
+    - 특정 component 에서만 사용할 css 파일을 만들 때 xxx.module.css 형식으로 파일을 만든다.
+    - 선택자는 반드시 클래스 선택자를 맨앞에 조합을 해야한다.
+    - 이 css 파일을 import 하면 우리가 작성한 클래스 선택자가 다르게 변형이 되어서 import 된다.
+    - 변형된 클래스 선택자를 편하게 활용하기 위해서는  "classNames" 라이브러리를 설치후 
+      binding 기능을 이용해서 사용하면 된다.
+*/
+
+.bg-yellow{
+    background-color: yellow;
+}
+
+.big-font{
+    font-size:30px;
+}
+
+
+.bold-font{
+    font-weight:bold;
+}

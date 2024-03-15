@@ -15,6 +15,8 @@ import Transition4 from "../Pages/transition4";
 import Cafe from "../Pages/Cafe";
 import CafeForm from "../Pages/CafeForm";
 import CafeDetail from "../Pages/CafeDetail";
+import RefTest from "../Pages/RefTest";
+import ModuleCss from "../Pages/ModuleCss";
 
 //라우트 정보를 배열에 저장시키기
 const routes=[
@@ -32,7 +34,9 @@ const routes=[
     {path:"/transition4" , element :<Transition4/>},
     {path:"/cafes", element:<Cafe/>},
     {path:"/cafes/new", element:<CafeForm/>},
-    {path:"/cafes/:num",element:<CafeDetail/>}
+    {path:"/cafes/:num",element:<CafeDetail/>},
+    {path:"/ref_test",element:<RefTest/>},
+    {path:"/module_css",element:<ModuleCss/>}
     
 
   ]
