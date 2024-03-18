@@ -23,6 +23,12 @@ export default function CafeDetail(){
     const [params, setParams]=useSearchParams({}) 
     //댓글 관련 처리
     const [commentList, setCommentList]=useState([])
+    //댓글의 현재 페이지 번호
+    const [pageNum, setPageNum]=useState(1)
+    //댓글 전체 페이지의 갯수(마지막 페이지 번호)
+    const [totalPageCount, setTotalPageCount] = useState(0)
+    //현재 로딩중인지 여부 
+    const [isLoading, setLoading] = useState(false)
 
     //console.log(new URLSearchParams(params).toString())
 
@@ -48,6 +54,8 @@ export default function CafeDetail(){
                 return item
             })
             setCommentList(list)
+            //전체 댓글 페이지의 갯수
+            setTotalPageCount(res.data.totalPageCount)
         })
         .catch(error=>{
             console.log(error)
@@ -67,11 +75,12 @@ export default function CafeDetail(){
         .then(res=>{
             //새로운 댓글 목록이 응답된다.
             console.log(res.data)
-            const list=res.data.map(item=>{
+            const list=res.data.commentList.map(item=>{
                 item.ref=createRef()
                 return item
             })
             setCommentList(list)
+            setTotalPageCount(res.data.totalPageCount)
         })
         .catch(error=>{
             console.log(error)
@@ -84,13 +93,13 @@ export default function CafeDetail(){
         const formData = new FormData(e.target)
         axios.patch(action, formData)
         .then(res=>{
-            //res.data는 수정한 댓글 하나의 정보이다.
+            //res.data 는 수정한 댓글 하나의 정보이다.
             console.log(res.data)
-            //수정한 댓글이 화면에 표시 되도록 
-            const list =commentList.map(item=>{
-                //수정한 댓글을 목록에서 찾아서 content를 수정해준다.
-                if(item.num=== res.data.num){
-                    item.content=res.data.content
+            //수정한 댓글이 화면에 표시 되도록
+            const list=commentList.map(item=>{
+                //수정한 댓글을 목록에서 찾아서 content 를 수정해준다.
+                if(item.num === res.data.num){
+                    item.content = res.data.content
                 }
                 return item
             })
@@ -111,6 +120,39 @@ export default function CafeDetail(){
         })
     }
 
+    //댓글 더보기 버튼을 눌렀을때 호출되는 함수
+    const handleMore = ()=>{
+        //현재 댓글의 페이지가 마지막 페이지 인지 여부를 알아내서
+        const isLast = pageNum === totalPageCount
+        //만일 마지막 페이지가 아니라면 바로 다음 댓글 페이지를 요청 
+        if(!isLast){
+            //로딩 상태로 바꿔준다
+            setLoading(true)
+            //요청할 댓글의 페이지
+            const page=pageNum+1
+            axios.get("/cafes/comments?pageNum="+page+"&ref_group="+num)
+            .then(res=>{
+                console.log(res.data)
+                const list=res.data.commentList.map(item=>{
+                    item.ref=createRef()
+                    return item
+                })
+                //새로운 댓글 목록을 기존의 댓글 목록과 합친 새로운 배열을 얻어내서 상태값을 변경해 준다.
+                setCommentList([...commentList, ...list])
+                setTotalPageCount(res.data.totalPageCount)
+                //증가된 페이지 번호도 반영해 준다 
+                setPageNum(page)
+                setLoading(false)
+            })
+            .catch(error=>{
+                console.log(error)
+                setLoading(false)
+            })
+
+        }else{
+            alert("댓글의 마지막 페이지 입니다")
+        }
+    }
 
     return (
         <>
@@ -195,7 +237,7 @@ export default function CafeDetail(){
                                                 { item.num !== item.comment_group ? <i>@{item.target_id}</i> : null}
                                                 <small>{item.regdate}</small>
 
-                                                <button className="answer-btn" onClick={(e)=>{                                
+                                                <Button variant="outline-success" size="sm" className="answer-btn" onClick={(e)=>{                                
                                                     //현재 버튼의 텍스트
                                                     const text=e.target.innerText
                                                     if(text === "답글"){
@@ -207,25 +249,25 @@ export default function CafeDetail(){
                                                         item.ref.current.querySelector("."+cx("re-insert-form"))
                                                             .style.display="none"
                                                     }
-                                                }}>답글</button>
+                                                }}>답글</Button>
                                                 { item.writer === userName ? <>
-                                                    <button className="update-btn" onClick={(e)=>{
-                                                    //현재 버튼의 텍스트
-                                                    const text=e.target.innerText
-                                                    if(text === "수정"){
-                                                        e.target.innerText="수정취소"
-                                                        item.ref.current.querySelector("."+cx("update-form"))
-                                                            .style.display="flex"
-                                                    }else{
-                                                        e.target.innerText="수정"
-                                                        item.ref.current.querySelector("."+cx("update-form"))
-                                                            .style.display="none"
-                                                    }
-                                                    }}>수정</button>
-                                                    
-                                                    <button onClick={()=>{
-                                                        handleDelete(item.num,item.ref)
-                                                    }}>삭제</button>
+                                                    <Button variant="outline-warning" size="sm" className="update-btn" onClick={(e)=>{
+                                                        //현재 버튼의 텍스트
+                                                        const text=e.target.innerText
+                                                        if(text === "수정"){
+                                                            e.target.innerText="수정취소"
+                                                            item.ref.current.querySelector("."+cx("update-form"))
+                                                                .style.display="flex"
+                                                        }else{
+                                                            e.target.innerText="수정"
+                                                            item.ref.current.querySelector("."+cx("update-form"))
+                                                                .style.display="none"
+                                                        }
+                                                    }}>수정</Button>
+
+                                                    <Button variant="outline-danger" size="sm" onClick={()=>{
+                                                        handleDelete(item.num, item.ref)
+                                                    }}>삭제</Button>
                                                 </> : null}
                                             </dt>
                                             <dd><pre>{item.content}</pre></dd>
@@ -245,20 +287,19 @@ export default function CafeDetail(){
                                             }}>등록</button>
                                         </form>
                                         { item.writer === userName ? 
-                                        <form 
-                                            className={cx('update-form')}
-                                            action={`/cafes/comments/${item.num}`}
-                                            onSubmit={handleUpdateSubmit}>
-                                            <input type="hidden" name="num" defaultValue={item.num}/>
-                                            <textarea name="content" defaultValue={item.content}></textarea>
+                                            <form 
+                                                className={cx('update-form')}
+                                                action={`/cafes/comments/${item.num}`}
+                                                onSubmit={handleUpdateSubmit}>
+                                                <input type="hidden" name="num" defaultValue={item.num}/>
+                                                <textarea name="content" defaultValue={item.content}></textarea>
                                                 <button type="submit" onClick={()=>{
                                                     item.ref.current.querySelector("."+cx("update-form")).style.display="none"
                                                     item.ref.current.querySelector("."+cx("update-btn")).innerText="수정"
                                                 }}>수정확인</button>
-                                                
-                                        </form>
-                                        : null
-                                   }
+                                            </form>
+                                            : null
+                                        }
                                     </>
                                 }   
                                 
@@ -267,6 +308,24 @@ export default function CafeDetail(){
                     }
                 </ul>
             </div>
+            {/* display:grid 의 자식요소는 default 값으로 폭을 100% 다 차지 하게 된다 */}
+            <div className="d-grid col-md-6 mx-auto">
+                <Button variant="success" 
+                    onClick={handleMore}
+                    disabled={isLoading}
+                >
+                    { isLoading ?
+                        <>
+                            <span className="spinner-border spinner-grow-sm"></span>
+                            <span className="spinner-grow spinner-grow-sm"></span>
+                            <span>로딩중...</span> 
+                        </> 
+                        
+                        : 
+                        <span>댓글 더보기</span>
+                    }
+                </Button>
+            </div> 
 
             <div style={{height:"300px", backgroundColor:"#cecece"}}></div>
         </>

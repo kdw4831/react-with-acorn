@@ -70,21 +70,15 @@
   border-radius: 4px;
 }	
 
-.loader{
-    /* 로딩 이미지를 가운데 정렬하기 위해 */
-    text-align: center;
-    display: none;
+/*flex layout으로 변경하고 자식 컨텐츠를 y 축(cross축) 기준으로 가운데 정렬하도록 한다.*/
+.comments dt{
+    display: flex;
+    align-items: center;
+
 }
-/* 회전하는 키프레임 정의 */
-@keyframes rotateAni{
-    from{
-        transform: rotate(0deg);
-    }
-    to{
-        transform: rotate(360deg);
-    }
-}
-/* 회전하는 키프레임을 로더 이미지에 무한 반복 시키기 */
-.loader svg{
-    animation: rotateAni 1s ease-out infinite;
+
+
+/*댓글 기능 버튼을 우측 끝에 배치하기 위해*/
+.comments dt small{
+    margin-right: auto; /*마진 오른쪽을 넓게 한다*/
 }
