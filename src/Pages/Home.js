@@ -6,6 +6,28 @@ import { ListGroup } from "react-bootstrap"
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 
+const nums =[1,2,3,4,5]
+
+// acc => 누산된 값 일 수도 있고 object일 수도 있다 map, reduce 이런식으로 하거나
+//filter, map reduce를 연속적으로 동작할 때도 있다. reducer 유용한 함수래  
+const reducer = (acc,curr, index)=>{
+    acc = acc+curr
+    return acc
+}
+// 배열.reducer(리듀서 함수, acc의 초기값) 
+const result= nums.reduce(reducer,0)
+console.log(result)
+
+const names=["kim","lee","kim","park","kim","lee"]
+const result2=names.reduce((acc,curr,index)=>{
+    if(acc[curr] === undefined){
+        acc[curr]=0
+    }
+    acc[curr]+=1
+    return acc
+},{})
+console.log(result2)
+
 export default function Home(){
 
     const [notice,setNotice] =useState([])
